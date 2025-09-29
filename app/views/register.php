@@ -14,7 +14,7 @@
 <?php endif; ?>
 
 <h2>Registration</h2>
-<form method="POST" action="">
+<form method="POST" action="/register">
     <div class="mb-3">
         <label class="form-label">Name</label>
         <input type="text" name="first_name" class="form-control" required>
@@ -36,7 +36,7 @@
         <input type="password" name="password" class="form-control" required>
     </div>
     <button type="submit" class="btn btn-success">Confirm</button>
-    <a href="index.php" class="btn btn-primary m-2">Back</a>
+    <a href="/" class="btn btn-primary m-2">Back</a>
 </form>
 </body>
 </html>

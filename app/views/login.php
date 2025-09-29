@@ -12,7 +12,7 @@
     <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
 <?php endif; ?>
 <h2>Login</h2>
-<form method="POST" action="">
+<form method="POST" action="/login">
     <div class="mb-3">
         <label class="form-label">E-mail</label>
         <input type="email" name="email" class="form-control" required>
@@ -22,7 +22,7 @@
         <input type="password" name="password" class="form-control" required>
     </div>
     <button type="submit" class="btn btn-success">Enter</button>
-    <a href="index.php" class="btn btn-primary m-2">Back</a>
+    <a href="/" class="btn btn-primary m-2">Back</a>
 </form>
 </body>
 </html>
