@@ -13,6 +13,6 @@
 <p><strong>Email:</strong> <?= htmlspecialchars($userData['email']) ?></p>
 <p><strong>Phone:</strong> <?= htmlspecialchars($userData['phone']) ?></p>
 
-<a href="index.php?page=logout" class="btn btn-danger">Log out of your account</a>
+<a href="/logout" class="btn btn-danger">Log out of your account</a>
 </body>
 </html>
