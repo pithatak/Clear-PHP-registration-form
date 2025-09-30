@@ -5,6 +5,7 @@ require_once __DIR__ . '/../controllers/AuthController.php';
 require_once __DIR__ . '/../controllers/HomeController.php';
 require_once __DIR__ . '/../controllers/DashboardController.php';
 require_once __DIR__ . '/../controllers/RegistrationController.php';
+require_once __DIR__ . "/../models/User.php";
 
 $router = new Router();
 

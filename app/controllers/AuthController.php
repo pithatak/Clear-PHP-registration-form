@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . "/../models/User.php";
+use core\Database;
 
 class AuthController
 {
@@ -15,8 +15,7 @@ class AuthController
 
     public function login()
     {
-        $database = new Database();
-        $db = $database->getConnection();
+        $db = Database::getConnection();
 
         $user = new User($db);
         $email = $_POST['email'];
