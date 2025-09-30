@@ -1,19 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Registration</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="p-5">
+<?php ob_start(); ?>
+<h2>Registration</h2>
 
-<?php if (!empty($message)): ?>
-    <div class="alert alert-success"><?= htmlspecialchars($message) ?></div>
-<?php elseif (!empty($error)): ?>
+<?php if (!empty($error)): ?>
     <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
 <?php endif; ?>
 
-<h2>Registration</h2>
+<?php if (!empty($message)): ?>
+    <div class="alert alert-success"><?= htmlspecialchars($message) ?></div>
+<?php endif; ?>
+
 <form method="POST" action="/register">
     <div class="mb-3">
         <label class="form-label">Name</label>
@@ -38,5 +33,6 @@
     <button type="submit" class="btn btn-success">Confirm</button>
     <a href="/" class="btn btn-primary m-2">Back</a>
 </form>
-</body>
-</html>
+<?php $content = ob_get_clean(); ?>
+
+<?php include __DIR__ . "/layout.php"; ?>

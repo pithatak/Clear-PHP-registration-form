@@ -7,8 +7,9 @@ class DashboardController
     public function showUserInformation()
     {
         session_start();
+
         if (!isset($_SESSION['user_id'])) {
-            header("Location: index.php?page=login&message=access_denied");
+            header("Location: /showLoginForm?message=access_denied");
             exit;
         }
 

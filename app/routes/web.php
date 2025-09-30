@@ -9,8 +9,8 @@ require_once __DIR__ . "/../models/User.php";
 
 $router = new Router();
 
-$router->get('/showRegistrationForm',   ['RegistrationController', 'showForm']);
-$router->post('/register',   ['RegistrationController', 'register']);
+$router->get('/showRegistrationForm', ['RegistrationController', 'showForm']);
+$router->post('/register', ['RegistrationController', 'register']);
 
 
 $router->get('/showLoginForm', ['AuthController', 'showForm']);
@@ -21,4 +21,4 @@ $router->get('/dashboard', ['DashboardController', 'showUserInformation']);
 
 $router->get('/', ['HomeController', 'index']);
 
-$router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
+$router->dispatch($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
