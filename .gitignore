@@ -1,4 +1,6 @@
 ### PhpStorm setings
 .idea/
 *.iml
+
 /vendor/
+.env

@@ -14,5 +14,10 @@
             "email": "poseva41@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+      "ext-pdo": "*",
+        "doctrine/orm": "^3.5",
+        "doctrine/migrations": "^3.9",
+        "vlucas/phpdotenv": "^5.6"
+    }
 }

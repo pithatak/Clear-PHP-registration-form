@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-function renderInput(string $name, string $label, string $type = 'text', string $value = '', array $errors = []) {
+function renderInput(string $name, string $label, string $type = 'text', string $value = '', array $errors = []): void
+{
     $hasError = !empty($errors[$name]);
     $class = 'form-control ' . ($hasError ? 'is-invalid' : (!empty($_POST) ? 'is-valid' : ''));
     ?>
@@ -20,4 +21,4 @@ function renderInput(string $name, string $label, string $type = 'text', string 
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
-<?php } ?>м
+<?php } ?>

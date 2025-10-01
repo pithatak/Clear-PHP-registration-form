@@ -1,0 +1,51 @@
+
+version: '3.1'
+services:
+  mysql:
+    container_name: php-mysql
+    image: 'mysql:8.0'
+    working_dir: /application
+    volumes:
+      - '.:/application'
+      - './docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql'
+
+    environment:
+    - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    - MYSQL_DATABASE=${MYSQL_DATABASE}
+    - MYSQL_USER=${MYSQL_USER}
+    - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - '54002:3306'
+    restart: always
+
+  webserver:
+    image: 'nginx:alpine'
+    working_dir: /application
+    volumes:
+      - '.:/application'
+      - './docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf'
+    ports:
+      - '54000:80'
+    restart: always
+
+  php-fpm:
+    container_name: php-form
+    build: docker/php-fpm
+    working_dir: /application
+    volumes:
+      - '.:/application'
+      - './docker/php-fpm/php-ini-overrides.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini'
+    restart: always
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: php-my-admin
+    depends_on:
+      - mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - PMA_HOST=mysql
+      - PMA_PORT=3306
+    ports:
+      - '54003:80'
+    restart: always
