@@ -4,16 +4,14 @@
 <?php elseif (!empty($error)): ?>
     <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
 <?php endif; ?>
+<?php include __DIR__ . "/../helpers.php"; ?>
+
     <h2>Login</h2>
     <form method="POST" action="/login">
-        <div class="mb-3">
-            <label class="form-label">E-mail</label>
-            <input type="email" name="email" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" required>
-        </div>
+        <?php
+        renderInput('email', 'E-mail', 'email', $email ?? '', $errors ?? []);
+        renderInput('password', 'Password', 'password', '', $errors ?? []);
+        ?>
         <button type="submit" class="btn btn-success">Enter</button>
         <a href="/" class="btn btn-primary m-2">Back</a>
     </form>

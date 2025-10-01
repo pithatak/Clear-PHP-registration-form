@@ -1,6 +1,7 @@
 <?php
 
 use core\Database;
+use core\Validator;
 
 class AuthController
 {
@@ -15,10 +16,23 @@ class AuthController
 
     public function login()
     {
-        $db = Database::getConnection();
+        $validator = new Validator($_POST, [
+            'email' => ['required', 'email'],
+            'password' => ['required']
+        ]);
 
-        $user = new User($db);
         $email = $_POST['email'];
+
+        if (!$validator->passes()) {
+            $errors = $validator->errors();
+
+            include __DIR__ . "/../views/login.php";
+
+            return;
+        }
+
+        $db = Database::getConnection();
+        $user = new User($db);
         $password = $_POST['password'];
 
         $authUser = $user->authenticate($email, $password);
