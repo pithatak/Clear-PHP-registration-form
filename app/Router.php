@@ -1,9 +1,6 @@
 <?php
 
-require __DIR__ . '/controllers/AuthController.php';
-require __DIR__ . '/controllers/HomeController.php';
-require __DIR__ . '/controllers/DashboardController.php';
-require __DIR__ . '/controllers/RegistrationController.php';
+namespace App;
 
 class Router
 {
@@ -21,6 +18,7 @@ class Router
 
     public function dispatch(string $method, string $path)
     {
+
         if (!isset($this->routes[$method][$path])) {
             http_response_code(404);
 

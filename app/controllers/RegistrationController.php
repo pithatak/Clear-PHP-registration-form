@@ -1,7 +1,11 @@
 <?php
 
-use core\Database;
-use core\Validator;
+namespace App\Controllers;
+
+use App\Core\Database;
+use App\Core\Validator;
+use App\Models\User;
+
 class RegistrationController
 
 {

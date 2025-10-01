@@ -1,25 +1,16 @@
 <?php
 
-require __DIR__ . '/../Router.php';
-require_once __DIR__ . '/../controllers/AuthController.php';
-require_once __DIR__ . '/../controllers/HomeController.php';
-require_once __DIR__ . '/../controllers/DashboardController.php';
-require_once __DIR__ . '/../controllers/RegistrationController.php';
-require_once __DIR__ . "/../models/User.php";
-require __DIR__ . '/../core/Validator.php';
+$router = new App\Router();
 
-$router = new Router();
+$router->get('/showRegistrationForm', ['App\Controllers\RegistrationController', 'showForm']);
+$router->post('/register', ['App\Controllers\RegistrationController', 'register']);
 
-$router->get('/showRegistrationForm', ['RegistrationController', 'showForm']);
-$router->post('/register', ['RegistrationController', 'register']);
+$router->get('/showLoginForm', ['App\Controllers\AuthController', 'showForm']);
+$router->get('/logout', ['App\Controllers\AuthController', 'logout']);
+$router->post('/login', ['App\Controllers\AuthController', 'login']);
 
+$router->get('/dashboard', ['App\Controllers\DashboardController', 'showUserInformation']);
 
-$router->get('/showLoginForm', ['AuthController', 'showForm']);
-$router->get('/logout', ['AuthController', 'logout']);
-$router->post('/login', ['AuthController', 'login']);
-
-$router->get('/dashboard', ['DashboardController', 'showUserInformation']);
-
-$router->get('/', ['HomeController', 'index']);
+$router->get('/', ['App\Controllers\HomeController', 'index']);
 
 $router->dispatch($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));

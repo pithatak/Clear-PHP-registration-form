@@ -1,6 +1,9 @@
 <?php
 
-use core\Database;
+namespace App\Controllers;
+
+use App\Core\Database;
+use App\Models\User;
 
 class DashboardController
 {
