@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controllers;
 
@@ -7,7 +8,7 @@ use App\Models\User;
 
 class DashboardController
 {
-    public function showUserInformation()
+    public function showUserInformation(): void
     {
         session_start();
 

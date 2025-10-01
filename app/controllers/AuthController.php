@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controllers;
 
@@ -8,7 +9,7 @@ use App\Models\User;
 
 class AuthController
 {
-    public function showForm()
+    public function showForm(): void
     {
         if (isset($_GET['message']) && $_GET['message'] === 'access_denied') {
             $error = "Please log in to access your personal account.";
@@ -17,7 +18,7 @@ class AuthController
         include __DIR__ . "/../views/login.php";
     }
 
-    public function login()
+    public function login(): void
     {
         $validator = new Validator($_POST, [
             'email' => ['required', 'email'],
@@ -52,7 +53,7 @@ class AuthController
         include __DIR__ . "/../views/login.php";
     }
 
-    public function logout()
+    public function logout(): void
     {
         session_start();
         session_unset();

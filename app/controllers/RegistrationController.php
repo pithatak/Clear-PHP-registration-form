@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controllers;
 
@@ -9,12 +10,12 @@ use App\Models\User;
 class RegistrationController
 
 {
-    public function showForm()
+    public function showForm(): void
     {
         include __DIR__ . "/../views/register/form.php";
     }
 
-    public function register()
+    public function register(): void
     {
         $errors = array();
         $db = Database::getConnection();
@@ -47,12 +48,11 @@ class RegistrationController
             return;
         }
 
-        $user->first_name = $name;
-        $user->last_name = $lastName;
-        $user->email = $email;
-        $user->phone = $phone;
-        $user->password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
+        $user->setFirstName($name);
+        $user->setLastName($lastName);
+        $user->setEmail($email);
+        $user->setPhone($phone);
+        $user->setPassword(password_hash($_POST['password'], PASSWORD_DEFAULT));
 
         if ($user->register()) {
             $message = 'Registration success!';

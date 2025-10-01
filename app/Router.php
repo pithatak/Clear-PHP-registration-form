@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App;
 
@@ -6,17 +7,17 @@ class Router
 {
     private array $routes = [];
 
-    public function get(string $path, $handler): void
+    public function get(string $path, array $handler): void
     {
         $this->routes['GET'][$path] = $handler;
     }
 
-    public function post(string $path, $handler): void
+    public function post(string $path, array $handler): void
     {
         $this->routes['POST'][$path] = $handler;
     }
 
-    public function dispatch(string $method, string $path)
+    public function dispatch(string $method, string $path): mixed
     {
 
         if (!isset($this->routes[$method][$path])) {

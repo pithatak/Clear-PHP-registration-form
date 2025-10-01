@@ -1,5 +1,8 @@
 <?php
-function renderInput($name, $label, $type = 'text', $value = '', $errors = []) {
+
+declare(strict_types=1);
+
+function renderInput(string $name, string $label, string $type = 'text', string $value = '', array $errors = []) {
     $hasError = !empty($errors[$name]);
     $class = 'form-control ' . ($hasError ? 'is-invalid' : (!empty($_POST) ? 'is-valid' : ''));
     ?>
@@ -17,4 +20,4 @@ function renderInput($name, $label, $type = 'text', $value = '', $errors = []) {
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
-<?php } ?>
+<?php } ?>м

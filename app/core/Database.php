@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Core;
 
@@ -6,11 +7,11 @@ use PDO;
 
 class Database
 {
-    private static $connection;
+    private static PDO $connection;
 
-    public static function getConnection()
+    public static function getConnection(): PDO
     {
-        if (!self::$connection) {
+        if (!isset(self::$connection)) {
             $config = require __DIR__ . '/../../config/database.php';
 
             self::$connection = new PDO(
@@ -20,6 +21,7 @@ class Database
             );
             self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
+
         return self::$connection;
     }
 }
