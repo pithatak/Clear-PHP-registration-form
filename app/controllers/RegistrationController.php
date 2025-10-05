@@ -42,7 +42,7 @@ class RegistrationController
             $errors['email'][] = 'User with this E-mail already exist';
         }
 
-        if (!empty($errors)){
+        if (!empty($errors)) {
             include __DIR__ . "/../views/register/form.php";
 
             return;
