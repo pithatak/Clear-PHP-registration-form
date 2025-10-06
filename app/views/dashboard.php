@@ -1,4 +1,5 @@
 <?php ob_start(); ?>
+<?php renderFlashMessage('success'); ?>
     <h2>Account information</h2>
     <p><strong>Name: </strong><?= htmlspecialchars($userData['first_name']) ?></p>
     <p><strong>Last name: </strong><?= htmlspecialchars($userData['last_name']) ?></p>

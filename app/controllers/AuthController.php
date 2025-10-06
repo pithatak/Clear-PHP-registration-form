@@ -6,20 +6,28 @@ namespace App\Controllers;
 use App\Core\Database;
 use App\Core\Validator;
 use App\Models\User;
+use App\Core\Csrf;
+use App\Core\Flash;
 
 class AuthController
 {
     public function showForm(): void
     {
-        if (isset($_GET['message']) && $_GET['message'] === 'access_denied') {
-            $error = "Please log in to access your personal account.";
-        }
-
         include __DIR__ . "/../views/login.php";
     }
 
     public function login(): void
     {
+
+        $token = $_POST['csrf_token'] ?? null;
+
+        if (!Csrf::validateToken($token, 'login')) {
+            Flash::add('error', 'Your session is outdated or the request is invalid. Try again.');
+            header('Location: /login');
+
+            exit;
+        }
+
         $validator = new Validator($_POST, [
             'email' => ['required', 'email'],
             'password' => ['required']
@@ -43,11 +51,13 @@ class AuthController
         if ($authUser) {
             session_start();
             $_SESSION['user_id'] = $authUser['id'];
-            header("Location: /dashboard");
-            exit;
 
+            Flash::add('success', 'You are now logged in.');
+            header("Location: /dashboard");
+
+            exit;
         } else {
-            $error = "Incorrect E-mail or password!";
+            $errors['upper_form'] = "Incorrect E-mail or password!";
         }
 
         include __DIR__ . "/../views/login.php";

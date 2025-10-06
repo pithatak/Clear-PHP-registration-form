@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Database;
+use App\Core\Flash;
 use App\Core\Validator;
 use App\Models\User;
+use App\Core\Csrf;
 
 class RegistrationController
 
@@ -17,6 +19,15 @@ class RegistrationController
 
     public function register(): void
     {
+        $token = $_POST['csrf_token'] ?? null;
+
+        if (!Csrf::validateToken($token, 'registration')) {
+            Flash::add('error', 'Your session is outdated or the request is invalid. Try again.');
+            header('Location: /showRegistrationForm');
+
+            exit;
+        }
+
         $errors = array();
         $db = Database::getConnection();
         $user = new User($db);
@@ -55,12 +66,16 @@ class RegistrationController
         $user->setPassword(password_hash($_POST['password'], PASSWORD_DEFAULT));
 
         if ($user->register()) {
-            $message = 'Registration success!';
-        } else {
-            $errors = 'Registration error.';
+            Flash::add('success', 'Registration success!');
+
+            include __DIR__ . "/../views/register/success.php";
+
+            return;
         }
 
+        Flash::add('error', 'Registration error. Please try again.');
 
-        include __DIR__ . "/../views/register/success.php";
+        include __DIR__ . "/../views/register/form.php";
+
     }
 }

@@ -57,7 +57,7 @@ class Validator
                     $this->errors[$field][] = "The \"{$field}\" field must contain only letters.";
                 }
 
-                if ($rule === 'numeric' && !ctype_alnum($value)) {
+                if ($rule === 'numeric' && !ctype_digit($value)) {
                     $this->errors[$field][] = "The \"{$field}\" field must contain only numbers.";
                 }
             }

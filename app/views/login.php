@@ -1,17 +1,17 @@
 <?php ob_start(); ?>
 
-<?php if (!empty($message)): ?>
-    <div class="alert alert-success"><?= htmlspecialchars($message) ?></div>
-<?php elseif (!empty($error)): ?>
-    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
-<?php endif; ?>
+<?php renderGlobalErrors($errors ?? []); ?>
+
+<?php renderFlashMessage('success'); ?>
+<?php renderFlashMessage('error'); ?>
 
     <h2>Login</h2>
     <form method="POST" action="/login">
         <?php
         renderInput('email', 'E-mail', 'email', $email ?? '', $errors ?? []);
-        renderInput('password', 'Password', 'password', '', $errors ?? []);
+        renderInput('password', 'Password', 'password', '', $errors ?? [], true);
         ?>
+        <?= \App\Core\Csrf::getTokenField('login') ?>
         <button type="submit" class="btn btn-success">Enter</button>
         <a href="/" class="btn btn-primary m-2">Back</a>
     </form>

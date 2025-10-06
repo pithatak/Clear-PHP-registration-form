@@ -2,10 +2,19 @@
 
 declare(strict_types=1);
 
-function renderInput(string $name, string $label, string $type = 'text', string $value = '', array $errors = []): void
+use App\Core\Flash;
+
+function renderInput(string $name, string $label, string $type = 'text', string $value = '', array $errors = [],
+                     bool   $skipFeedback = false): void
 {
-    $hasError = !empty($errors[$name]);
-    $class = 'form-control ' . ($hasError ? 'is-invalid' : (!empty($_POST) ? 'is-valid' : ''));
+    $class = 'form-control';
+    if (!$skipFeedback) {
+        $hasError = !empty($errors[$name]);
+        $class .= $hasError ? ' is-invalid' : (!empty($_POST) ? ' is-valid' : '');
+    } else {
+        $hasError = false;
+    }
+
     ?>
     <div class="mb-3">
         <label class="form-label" for="field-<?= $name ?>"><?= htmlspecialchars($label) ?></label>
@@ -21,4 +30,21 @@ function renderInput(string $name, string $label, string $type = 'text', string 
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
-<?php } ?>
+<?php }
+
+function renderGlobalErrors(array $errors = []): void
+{
+    if (!empty($errors['upper_form'])) {
+        foreach ((array)$errors['upper_form'] as $error) {
+            echo '<div class="alert alert-danger">' . htmlspecialchars($error) . '</div>';
+        }
+    }
+}
+
+function renderFlashMessage(string $type): void
+{
+    if (\App\Core\Flash::has($type)) {
+        $class = $type === 'success' ? 'alert-success' : 'alert-danger';
+        echo '<div class="alert ' . $class . '">' . htmlspecialchars(\App\Core\Flash::get($type)) . '</div>';
+    }
+}
