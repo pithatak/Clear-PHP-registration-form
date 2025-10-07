@@ -8,6 +8,7 @@ use App\Core\Validator;
 use App\Models\User;
 use App\Core\Csrf;
 use App\Core\Flash;
+use App\core\Session;
 
 class AuthController
 {
@@ -49,8 +50,8 @@ class AuthController
 
         $authUser = $user->authenticate($email, $password);
         if ($authUser) {
-            session_start();
-            $_SESSION['user_id'] = $authUser['id'];
+            Session::start();
+            Session::set('user_id', $authUser['id']);
 
             Flash::add('success', 'You are now logged in.');
             header("Location: /dashboard");
@@ -65,9 +66,7 @@ class AuthController
 
     public function logout(): void
     {
-        session_start();
-        session_unset();
-        session_destroy();
+        Session::destroy();
 
         header("Location: /showLoginForm");
         exit();

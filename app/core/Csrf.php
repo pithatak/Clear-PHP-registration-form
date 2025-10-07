@@ -3,29 +3,23 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\core\Session;
+
 class Csrf
 {
     private const DEFAULT_TOKEN_KEY = 'csrf_token';
     private const TOKEN_LIFETIME = 3600;
 
-    private static function ensureSessionStarted(): void
-    {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-    }
 
     public static function generateToken(string $key = self::DEFAULT_TOKEN_KEY): string
     {
-        self::ensureSessionStarted();
-
         $token = bin2hex(random_bytes(32));
         $expiresAt = time() + self::TOKEN_LIFETIME;
 
-        $_SESSION[$key] = [
+        Session::set($key, [
             'token' => $token,
             'expires_at' => $expiresAt
-        ];
+        ]);
 
         return $token;
     }
@@ -37,10 +31,9 @@ class Csrf
             return false;
         }
 
-        self::ensureSessionStarted();
         self::cleanupExpiredToken($key);
 
-        $storedToken = $_SESSION[$key] ?? null;
+        $storedToken = Session::get($key);
 
         if (!$storedToken || !isset($storedToken['token'], $storedToken['expires_at'])) {
 
@@ -50,7 +43,7 @@ class Csrf
         $isValid = hash_equals($storedToken['token'], $token);
 
         if ($isValid) {
-            unset($_SESSION[$key]);
+            Session::remove($key);
         }
 
         return $isValid;
@@ -58,10 +51,10 @@ class Csrf
 
     private static function cleanupExpiredToken(string $key): void
     {
-        if (!empty($_SESSION[$key])) {
-            $storedToken = $_SESSION[$key];
+        if (Session::has($key)) {
+            $storedToken = Session::get($key);
             if (time() > $storedToken['expires_at']) {
-                unset($_SESSION[$key]);
+                Session::remove($key);
             }
         }
     }

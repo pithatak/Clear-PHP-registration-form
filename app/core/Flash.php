@@ -2,42 +2,37 @@
 
 namespace App\Core;
 
+use App\core\Session;
+
 class Flash
 {
-    private static function ensureSessionStarted(): void
-    {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-    }
-
     public static function add(string $type, string $message): void
     {
-        self::ensureSessionStarted();
-
-        $_SESSION['flash'][$type] = $message;
+        $flashes = Session::get('flash', []);
+        $flashes[$type] = $message;
+        Session::set('flash', $flashes);
     }
 
     public static function get(string $type): ?string
     {
-        self::ensureSessionStarted();
-
-        $msg = $_SESSION['flash'][$type] ?? null;
-
-        if (!isset($msg)) {
+        $flashes = Session::get('flash', []);
+        if (!isset($flashes[$type])) {
 
             return null;
         }
 
-        unset($_SESSION['flash'][$type]);
+        $message = $flashes[$type];
+        unset($flashes[$type]);
+        Session::set('flash', $flashes);
 
-        return $msg;
+        return $message;
     }
 
     public static function has(string $type): bool
     {
-        self::ensureSessionStarted();
+        $flashes = Session::get('flash', []);
 
-        return !empty($_SESSION['flash'][$type]);
+        return isset($flashes[$type]);
     }
+
 }
