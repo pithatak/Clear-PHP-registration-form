@@ -23,14 +23,14 @@ class AuthController
 
         if (!Csrf::validateToken($token, 'login')) {
             Flash::add('error', 'Your session is outdated or the request is invalid. Try again.');
-            header('Location: /login');
+            header('Location: /showLoginForm');
 
             exit;
         }
 
         $validator = new Validator($_POST, [
             'email' => ['required', 'email'],
-            'password' => ['required']
+            'password' => ['required', 'min:6', 'max:15']
         ]);
 
         $email = $_POST['email'];
