@@ -39,7 +39,7 @@ services:
       dockerfile: docker/php-fpm/Dockerfile
     working_dir: /application
     volumes:
-      - './app:/application/app'
+      - './App:/application/App'
       - './public:/application/public'
       - './config:/application/config'
       - './docker/php-fpm/php-ini-overrides.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini'

@@ -8,7 +8,7 @@ RUN apt-get update; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
-COPY app/ /application/app/
+COPY App/ /application/App/
 COPY config/ /application/config/
 COPY public/ /application/public/
 COPY composer.json composer.lock /application/

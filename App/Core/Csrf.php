@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Core;
 
-use App\Core\Session;
+use App\core\Session;
 
 class Csrf
 {
