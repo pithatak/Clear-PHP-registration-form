@@ -3,12 +3,13 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Core\Database;
-use App\Core\Validator;
-use App\Models\User;
 use App\Core\Csrf;
+use App\Core\Database;
 use App\Core\Flash;
 use App\Core\Session;
+use App\Core\Validator;
+use App\Repositories\UserRepository;
+use App\Services\AuthService;
 
 class AuthController
 {
@@ -19,10 +20,9 @@ class AuthController
 
     public function login(): void
     {
+        $errors = [];
 
-        $token = $_POST['csrf_token'] ?? null;
-
-        if (!Csrf::validateToken($token, 'login')) {
+        if (!Csrf::validateToken($_POST['csrf_token'], 'login')) {
             Flash::add('error', 'Your session is outdated or the request is invalid. Try again.');
             header('Location: /showLoginForm');
 
@@ -45,13 +45,17 @@ class AuthController
         }
 
         $db = Database::getConnection();
-        $user = new User($db);
+        $userRepository = new UserRepository($db);
+        $authService = new AuthService($userRepository);
+
         $password = $_POST['password'];
 
-        $authUser = $user->authenticate($email, $password);
+        $authUser = $authService->login($email, $password);
+
         if ($authUser) {
             Session::start();
-            Session::set('user_id', $authUser['id']);
+            Session::regenerate(true);
+            Session::set('user_id', $authUser->getId());
 
             Flash::add('success', 'You are now logged in.');
             header("Location: /dashboard");
@@ -67,8 +71,8 @@ class AuthController
     public function logout(): void
     {
         Session::destroy();
-
         header("Location: /showLoginForm");
+
         exit();
     }
 }
