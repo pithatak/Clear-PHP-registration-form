@@ -3,11 +3,12 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Core\Csrf;
 use App\Core\Database;
 use App\Core\Flash;
 use App\Core\Validator;
-use App\Models\User;
-use App\Core\Csrf;
+use App\Repositories\UserRepository;
+use App\Services\AuthService;
 
 class RegistrationController
 
@@ -19,18 +20,14 @@ class RegistrationController
 
     public function register(): void
     {
-        $token = $_POST['csrf_token'] ?? null;
+        $errors = [];
 
-        if (!Csrf::validateToken($token, 'registration')) {
+        if (!Csrf::validateToken($_POST['csrf_token'], 'registration')) {
             Flash::add('error', 'Your session is outdated or the request is invalid. Try again.');
             header('Location: /showRegistrationForm');
 
             exit;
         }
-
-        $errors = array();
-        $db = Database::getConnection();
-        $user = new User($db);
 
         $validator = new Validator($_POST, [
             'first_name' => ['required', 'min:3', 'max:15', 'alpha'],
@@ -40,16 +37,21 @@ class RegistrationController
             'password' => ['required', 'min:6', 'max:15'],
         ]);
 
+
         $name = $_POST['first_name'];
         $lastName = $_POST['last_name'];
         $email = $_POST['email'];
         $phone = $_POST['phone'];
+        $password = $_POST['password'];
 
         if (!$validator->passes()) {
             $errors = $validator->errors();
         }
 
-        if ($user->emailExists($email)) {
+        $db = Database::getConnection();
+        $userRepository = new UserRepository($db);
+
+        if ($userRepository->emailExists($email)) {
             $errors['email'][] = 'User with this E-mail already exist';
         }
 
@@ -59,13 +61,16 @@ class RegistrationController
             return;
         }
 
-        $user->setFirstName($name);
-        $user->setLastName($lastName);
-        $user->setEmail($email);
-        $user->setPhone($phone);
-        $user->setPassword(password_hash($_POST['password'], PASSWORD_DEFAULT));
+        $authService = new AuthService($userRepository);
+        $register = $authService->register([
+            'first_name' => $name,
+            'last_name'  => $lastName,
+            'email'      => $email,
+            'phone'      => $phone,
+            'password'   => $password,
+        ]);
 
-        if ($user->register()) {
+        if ($register) {
             Flash::add('success', 'Registration success!');
 
             include __DIR__ . "/../views/register/success.php";
@@ -76,6 +81,5 @@ class RegistrationController
         Flash::add('error', 'Registration error. Please try again.');
 
         include __DIR__ . "/../views/register/form.php";
-
     }
 }

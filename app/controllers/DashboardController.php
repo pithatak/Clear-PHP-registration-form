@@ -5,8 +5,8 @@ namespace App\Controllers;
 
 use App\Core\Database;
 use App\Core\Flash;
-use App\Models\User;
 use App\Core\Session;
+use App\Repositories\UserRepository;
 
 class DashboardController
 {
@@ -20,10 +20,9 @@ class DashboardController
         }
 
         $db = Database::getConnection();
+        $userRepository = new UserRepository($db);
 
-        $user = new User($db);
-
-        $userData = $user->findById(Session::get('user_id'));
+        $user = $userRepository->findById(Session::get('user_id'));
 
         include __DIR__ . "/../views/dashboard.php";
     }

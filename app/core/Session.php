@@ -60,4 +60,8 @@ class Session
         }
     }
 
+    public static function regenerate($delete_old_session = false): void
+    {
+        session_regenerate_id($delete_old_session);
+    }
 }
