@@ -6,7 +6,7 @@ namespace App\Controllers;
 use App\Core\Database;
 use App\Core\Flash;
 use App\Models\User;
-use App\core\Session;
+use App\Core\Session;
 
 class DashboardController
 {

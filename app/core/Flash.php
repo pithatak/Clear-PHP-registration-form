@@ -2,7 +2,7 @@
 
 namespace App\Core;
 
-use App\core\Session;
+use App\Core\Session;
 
 class Flash
 {

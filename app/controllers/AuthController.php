@@ -8,7 +8,7 @@ use App\Core\Validator;
 use App\Models\User;
 use App\Core\Csrf;
 use App\Core\Flash;
-use App\core\Session;
+use App\Core\Session;
 
 class AuthController
 {
