@@ -10,6 +10,7 @@ class Session
             session_start($options);
         }
     }
+
     public static function ensureStarted(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -50,14 +51,15 @@ class Session
 
         $_SESSION = [];
     }
+
     public static function destroy(): void
     {
-        if (session_status() === PHP_SESSION_ACTIVE) {
-            session_unset();
-            session_destroy();
-            session_write_close();
 
-        }
+        self::ensureStarted();
+
+        session_unset();
+        session_destroy();
+        session_write_close();
     }
 
     public static function regenerate($delete_old_session = false): void
