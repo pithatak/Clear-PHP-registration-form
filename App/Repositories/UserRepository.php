@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Core\Session;
 use App\Entities\User;
 use PDO;
 
@@ -75,4 +76,8 @@ class UserRepository
         );
     }
 
+    public function getCurrentUser(): ?User
+    {
+        return $this->findById(Session::get('user_id'));
+    }
 }

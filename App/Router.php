@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Core\Request;
+
 class Router
 {
     private array $routes = [];
@@ -17,19 +19,28 @@ class Router
         $this->routes['POST'][$path] = $handler;
     }
 
-    public function dispatch(string $method, string $path): mixed
+    public function dispatch(string $method, string $path, Request $request): void
     {
-
         if (!isset($this->routes[$method][$path])) {
             http_response_code(404);
-
             echo "404 Not Found";
 
-            exit();
+            return;
         }
 
         [$class, $classMethod] = $this->routes[$method][$path];
 
-        return call_user_func([new $class, $classMethod]);
+        $controller = new $class();
+
+        $response = $controller->$classMethod($request);
+
+        if ($response instanceof \App\Core\Response) {
+            $response->send();
+        } else {
+            http_response_code(400);
+            echo "400 Bad Request";
+
+            return;
+        }
     }
 }

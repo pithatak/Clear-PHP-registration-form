@@ -6,73 +6,68 @@ namespace App\Controllers;
 use App\Core\Csrf;
 use App\Core\Database;
 use App\Core\Flash;
+use App\Core\Request;
+use App\Core\Response;
 use App\Core\Session;
-use App\Core\Validator;
 use App\Repositories\UserRepository;
 use App\Services\AuthService;
 
 class AuthController
 {
-    public function showForm(): void
+    private AuthService $authService;
+
+    public function __construct(?AuthService $authService = null)
     {
-        include __DIR__ . "/../views/login.php";
+        $this->authService = $authService ?? new AuthService(new UserRepository(Database::getConnection()));
     }
 
-    public function login(): void
+    public function showForm(Request $request): Response
     {
+        return new Response(__DIR__ . '/../views/login.php');
+    }
+
+    public function login(Request $request): Response
+    {
+        $data = $request->getPost();
         $errors = [];
 
-        if (!Csrf::validateToken($_POST['csrf_token'], 'login')) {
+        if (!Csrf::validateToken($data['csrf_token'], 'login')) {
             Flash::add('error', 'Your session is outdated or the request is invalid. Try again.');
-            header('Location: /showLoginForm');
 
-            exit;
+            return new Response(redirect: '/showLoginForm');
         }
 
-        $validator = new Validator($_POST, [
-            'email' => ['required', 'email'],
-            'password' => ['required', 'min:6', 'max:15']
-        ]);
+        $errors = $this->authService->validateLoginData($data);
+        if ($errors) {
+            $errors['upper_form'] = "Incorrect E-mail or password!";
 
-        $email = $_POST['email'];
-
-        if (!$validator->passes()) {
-            $errors = $validator->errors();
-
-            include __DIR__ . "/../views/login.php";
-
-            return;
+            return new Response(__DIR__ . '/../views/login.php', [
+                'data' => $data,
+                'errors' => $errors
+            ]);
         }
 
-        $db = Database::getConnection();
-        $userRepository = new UserRepository($db);
-        $authService = new AuthService($userRepository);
+        $user = $this->authService->login($data['email'], $data['password']);
 
-        $password = $_POST['password'];
-
-        $authUser = $authService->login($email, $password);
-
-        if ($authUser) {
+        if ($user) {
             Session::start();
             Session::regenerate(true);
-            Session::set('user_id', $authUser->getId());
+            Session::set('user_id', $user->getId());
 
             Flash::add('success', 'You are now logged in.');
-            header("Location: /dashboard");
 
-            exit;
+            return new Response(redirect: '/dashboard');
         } else {
             $errors['upper_form'] = "Incorrect E-mail or password!";
         }
 
-        include __DIR__ . "/../views/login.php";
+        return new Response(__DIR__ . '/../views/login.php', ['errors' => $errors]);
     }
 
-    public function logout(): void
+    public function logout(): Response
     {
         Session::destroy();
-        header("Location: /showLoginForm");
 
-        exit();
+        return new Response(redirect: '/showLoginForm');
     }
 }

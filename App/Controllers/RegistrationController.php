@@ -6,80 +6,62 @@ namespace App\Controllers;
 use App\Core\Csrf;
 use App\Core\Database;
 use App\Core\Flash;
-use App\Core\Validator;
+use App\Core\Request;
+use App\Core\Response;
 use App\Repositories\UserRepository;
 use App\Services\AuthService;
 
 class RegistrationController
-
 {
-    public function showForm(): void
+
+    private AuthService $authService;
+
+    public function __construct(?AuthService $authService = null)
     {
-        include __DIR__ . "/../views/register/form.php";
+        $this->authService = $authService ?? new AuthService(new UserRepository(Database::getConnection()));
     }
 
-    public function register(): void
+    public function showForm(): Response
     {
+        return new Response(__DIR__ . "/../views/register/form.php");
+    }
+
+    public function register(Request $request): Response
+    {
+        $data = $request->getPost();
+
         $errors = [];
 
         if (!Csrf::validateToken($_POST['csrf_token'], 'registration')) {
             Flash::add('error', 'Your session is outdated or the request is invalid. Try again.');
-            header('Location: /showRegistrationForm');
 
-            exit;
+            return new Response(redirect: "/showRegistrationForm");
         }
 
-        $validator = new Validator($_POST, [
-            'first_name' => ['required', 'min:3', 'max:15', 'alpha'],
-            'last_name' => ['required', 'min:3', 'max:15', 'alpha'],
-            'email' => ['required', 'email'],
-            'phone' => ['required', 'length:9', 'numeric'],
-            'password' => ['required', 'min:6', 'max:15'],
-        ]);
+        $errors =  $this->authService->validateRegisterData($data);
+        if ($errors) {
 
-
-        $name = $_POST['first_name'];
-        $lastName = $_POST['last_name'];
-        $email = $_POST['email'];
-        $phone = $_POST['phone'];
-        $password = $_POST['password'];
-
-        if (!$validator->passes()) {
-            $errors = $validator->errors();
+            return new Response(__DIR__ . '/../views/register/form.php', [
+                'data' => $data,
+                'errors' => $errors
+            ]);
         }
 
-        $db = Database::getConnection();
-        $userRepository = new UserRepository($db);
-
-        if ($userRepository->emailExists($email)) {
-            $errors['email'][] = 'User with this E-mail already exist';
-        }
-
-        if (!empty($errors)) {
-            include __DIR__ . "/../views/register/form.php";
-
-            return;
-        }
-
-        $authService = new AuthService($userRepository);
-        $register = $authService->register([
-            'first_name' => $name,
-            'last_name'  => $lastName,
-            'email'      => $email,
-            'phone'      => $phone,
-            'password'   => $password,
-        ]);
+        $register = $this->authService->register($data);
 
         if ($register) {
             Flash::add('success', 'Registration success!');
 
-            include __DIR__ . "/../views/register/success.php";
-
-            return;
+            return new Response(redirect: '/showRegistrationSuccess');
         }
 
         Flash::add('error', 'Registration error. Please try again.');
 
-        include __DIR__ . "/../views/register/form.php";
+        return new Response(__DIR__ . '/../views/register/form.php');
+    }
+
+    public function showSuccess(): Response
+    {
+        return new Response(__DIR__ . '/../views/register/success.php');
     }
 }

@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Core\Response;
+
 class HomeController
 {
-    public function index(): void
+    public function index(): Response
     {
-        include __DIR__ . "/../views/main.php";
+        return new Response(__DIR__ . "/../views/main.php");
     }
 }
